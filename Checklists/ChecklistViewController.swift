@@ -25,6 +25,7 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
         let indexPaths = [indexPath]
         tableView.insertRows(at: indexPaths, with: .automatic)
         navigationController?.popViewController(animated: true)
+        saveChecklistItems()
     }
     
     func itemDetailViewController(
@@ -37,11 +38,12 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
             }
         }
          navigationController?.popViewController(animated: true)
+        saveChecklistItems()
     }
     
-    var items: [ChecklistItem]
+    var items = [ChecklistItem]()
     
-    required init?(coder aDecoder: NSCoder) {
+    /*required init?(coder aDecoder: NSCoder) {
         items = [ChecklistItem] ()
         
         let row0item = ChecklistItem()
@@ -80,12 +82,16 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
         items.append(row6item)
         
         super.init(coder: aDecoder)
-    }
+        print("Documents folder is \(documentsDirectory())")
+        print("Data file path is \(dataFilePath())")
+    }*/
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        //Enable large titles
         navigationController?.navigationBar.prefersLargeTitles = true
+        // Load items
+        loadChecklistItems()
     }
 
     override func didReceiveMemoryWarning() {
@@ -153,6 +159,7 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
             configureCheckmark(for: cell, with: item)
         }
         tableView.deselectRow(at: indexPath, animated: true)
+        saveChecklistItems()
     }
     
     override func tableView(_ tableView: UITableView,
@@ -162,10 +169,51 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
         
         let indexPaths = [indexPath]
         tableView.deleteRows(at: indexPaths, with: .automatic)
+        saveChecklistItems()
+    }
+    
+    func documentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
     }
 
+    func dataFilePath()-> URL{
+        return documentsDirectory().appendingPathComponent("Checklists.plist")
+    }
     
+    func saveChecklistItems(){
+        //1
+        let encoder = PropertyListEncoder()
+        //2
+        do {
+        //3
+            let data = try encoder.encode(items)
+        //4
+            try data.write(to: dataFilePath(),
+                            options: Data.WritingOptions.atomic)
+        //5
+        } catch {
+        //6
+            print("Error encoding item array!")
+            
+        }
+    }
     
+    func loadChecklistItems(){
+        //1
+        let path = dataFilePath()
+        //2
+        if let data = try? Data(contentsOf: path) {
+            //3
+            let decoder = PropertyListDecoder()
+            do{
+                //4
+                items = try decoder.decode([ChecklistItem].self, from: data)
+            } catch {
+                print("Error decodeing item array!")
+            }
+        }
+    }
 
 }
 
