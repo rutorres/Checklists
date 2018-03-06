@@ -42,6 +42,8 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
     }
     
     var items = [ChecklistItem]()
+    var checklist: Checklist!
+    
     
     /*required init?(coder aDecoder: NSCoder) {
         items = [ChecklistItem] ()
@@ -88,10 +90,11 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //Enable large titles
-        navigationController?.navigationBar.prefersLargeTitles = true
+        //Disable large titles
+        navigationItem.largeTitleDisplayMode = .never
         // Load items
         loadChecklistItems()
+        title = checklist.name
     }
 
     override func didReceiveMemoryWarning() {

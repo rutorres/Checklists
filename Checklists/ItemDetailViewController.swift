@@ -35,7 +35,7 @@ class ItemDetailViewController: UITableViewController, UITextFieldDelegate {
             doneBarButton.isEnabled = true
         }
     }
-    
+    //MARK:- Actions
     @IBAction func cancel() {
         delegate?.itemDetailViewControllerDidCancel(self)
     }
@@ -53,6 +53,7 @@ class ItemDetailViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
+    //MARK:- TableView Delegates
     override func tableView(_ tableView: UITableView,
             willSelectRowAt indexPath: IndexPath)
             -> IndexPath? {
@@ -64,6 +65,7 @@ class ItemDetailViewController: UITableViewController, UITextFieldDelegate {
         textField.becomeFirstResponder()
     }
     
+    //MARK:- UITextField Delegates
     func textField(_ textField: UITextField,
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool {
@@ -71,12 +73,6 @@ class ItemDetailViewController: UITableViewController, UITextFieldDelegate {
         let oldText = textField.text!
         let stringRange = Range(range, in: oldText)!
         let newText = oldText.replacingCharacters(in: stringRange, with: string)
-        
-        /*if newText.isEmpty {
-            doneBarButton.isEnabled = false
-        } else {
-            doneBarButton.isEnabled = true
-        }*/
         
         doneBarButton.isEnabled = !(newText.isEmpty)
         return true
